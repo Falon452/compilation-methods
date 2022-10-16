@@ -1,0 +1,67 @@
+
+grammar: SLIMP super language including matching patterns;
+
+# zmienne - mogą być lokalne lub globalne;
+x: int = 5;
+x: char = 'c';
+x: bool = true;
+x: bool = false;
+
+# operacje arytmetyczne;
+x: int = 12;
+y: int = 25;
+x + x;
+x - x;
+x * x;
+x // x;
+x * (x + x);
+
+# operacje logiczne;
+x < x;
+x > x;
+x == x;
+x != x;
+
+b: bool = true;
+
+if x == 5 {
+    print("abc");
+} else if {
+
+} else {
+
+}
+
+for i <- [1, 2, 3] {
+    print(i);
+}
+
+fun recursive(x: int, b: bool): int {
+    if x == 3 {
+        return 8921;
+    }
+    else {
+        return recursive(3, 5);
+    }
+}
+
+while true {
+    break;
+}
+
+list: [int] = [1..10];
+tuple:  (int, char, bool) = (1, 'c', true);
+map: { int -> char } = {2 -> 'c', 3 -> 'e'};
+
+(a: int, b: bool, c: char) = (1, true, 'c');
+
+(_, b: bool, 'c') = (1, true, 'c');
+print(b) # true
+
+a: {int -> (char, bool)} = {21 -> ('j', true), 37 -> ('p', false)};
+{21 -> _, 37 -> (value: char, false)} = a;
+
+print(value) # 'p';
+
+
+
