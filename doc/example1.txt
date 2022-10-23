@@ -1,0 +1,7 @@
+fun print_hello() {
+    print("Hello world!");
+}
+
+fun main {
+    print_hello();
+}
