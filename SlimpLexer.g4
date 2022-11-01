@@ -13,8 +13,6 @@ KW_RETURN: 'return';
 KW_TRUE: 'true';
 KW_WHILE: 'while';
 
-// null ?????
-
 // identifier
 
 IDENTIFIER: [a-zA-Z_][a-zA-Z_0-9]*;
@@ -29,11 +27,6 @@ WHITESPACE: [\p{Zs}] -> channel(HIDDEN);
 NEWLINE: ('\r\n' | [\r\n]) -> channel(HIDDEN);
 
 // literals
-
-BOOL_LITERAL
-    : KW_FALSE
-    | KW_TRUE
-    ;
 
 INTEGER_LITERAL
     : DEC_LITERAL
@@ -104,6 +97,7 @@ COMMA: ',';
 SEMI: ';';
 COLON: ':';
 LARROW: '<-';
+RARROW: '->';
 POUND: '#';
 
 LCURLYBRACE: '{';

@@ -1,0 +1,8 @@
+fun main({a: int -> val: int, b: int -> val2:int}): () {
+    b: int = 3242;
+    if true {
+        vos: char = 'a';
+    } else {
+        vos: char = 'b';
+    }
+}

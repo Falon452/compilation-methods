@@ -1,20 +1,25 @@
 parser grammar SlimpParser;
 
+options
+{
+   tokenVocab = SlimpLexer;
+}
 
 program
     : declaration* EOF
     ;
 
 declaration
-    :
-    (
-        globalVariable // todo
-        | function
-    )
+    : globalVariable
+    | function
+    ;
+
+globalVariable
+    : '-'  // todo
     ;
 
 function
-    : 'fun' IDENTIFIER '(' functionParams? '):' functionReturnType block
+    : 'fun' IDENTIFIER '(' functionParams? ')' ':' functionReturnType blockExpression
     ;
 
 functionParams
@@ -25,10 +30,52 @@ functionReturnType
     : type
     ;
 
-block
-    : TODO
+blockExpression
+    : '{' statement* '}'
     ;
 
+// statements
+
+statement
+    : ';'
+    | declarationStatement
+    | expressionStatement
+    ;
+
+declarationStatement
+    : pattern '=' expression ';'
+    ;
+
+expressionStatement
+    : expression ';'
+    | expressionWithBlock ';'?
+    ;
+
+expression
+    : literal // todo
+    ;
+
+expressionWithBlock
+    : ifExpression
+    ;
+
+ifExpression
+    : 'if' expression blockExpression
+    (
+        'else' (blockExpression | ifExpression)
+    )?
+    ;
+
+// literals
+
+literal
+    : INTEGER_LITERAL
+    | FLOAT_LITERAL
+    | CHAR_LITERAL
+    | STRING_LITERAL
+    | KW_FALSE
+    | KW_TRUE
+    ;
 
 // types
 
@@ -49,11 +96,11 @@ parenthesizedType
     ;
 
 tupleType
-    : '(' (type ',')+ type? ')'
+    : '(' (type ',')* type? ')'
     ;
 
 arrayType
-    : '[' type ';' expression ']'  // todo expression
+    : '[' type ';' expression ']'
     ;
 
 mapType
@@ -75,7 +122,7 @@ patternLiteral
     ;
 
 patternIdentifier
-    : IDENTIFIER ':' type
+    : IDENTIFIER ':' type  // sometimes patterns do not need to be typed
     | '_'
     ;
 
@@ -84,13 +131,13 @@ parenthesizedPattern
     ;
 
 tuplePattern
-    : '(' (pattern ',')+ pattern? ')'
+    : '(' (pattern ',')* pattern? ')'
     ;
 
 arrayPattern
-    : '[' pattern ';' expression ']'  // todo expression
+    : '[' ']'  // todo this need to be taken care of
     ;
 
 mapPattern
-    : '{' pattern '->' pattern '}'
+    : '{' (pattern '->' pattern ',')* (pattern '->' pattern)? '}'
     ;
