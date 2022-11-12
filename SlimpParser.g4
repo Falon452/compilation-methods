@@ -15,22 +15,23 @@ declaration
     ;
 
 globalVariable
-    : '-'  // todo
+    : declarationStatement
+    | assignmentStatement
     ;
 
 function
-    : 'fun' IDENTIFIER '(' functionParams? ')' ':' functionReturnType blockExpression
+    : 'fun' IDENTIFIER '(' functionParams? ')' (':' functionReturnType)? block
     ;
 
 functionParams
-    :   pattern (',' pattern)* ','?
+    :   '&'? typedPatternIdentifier (',' '&'? typedPatternIdentifier)* ','?
     ;
 
 functionReturnType
     : type
     ;
 
-blockExpression
+block
     : '{' statement* '}'
     ;
 
@@ -39,36 +40,98 @@ blockExpression
 statement
     : ';'
     | declarationStatement
+    | assignmentStatement
     | expressionStatement
+    | blockStatement
+    | ('return' expression | 'break' | 'continue') ';'
     ;
 
 declarationStatement
+    : typedPatternIdentifier ';'
+    ;
+
+assignmentStatement
     : pattern '=' expression ';'
     ;
 
 expressionStatement
     : expression ';'
-    | expressionWithBlock ';'?
     ;
 
 expression
-    : literal // todo
+    : literalExpression
+    | IDENTIFIER '(' callParams ')'
+    | expression '[' expression ']'
+    | expression 'as' type
+    | ('-' | '!') expression
+    | expression ('&&' | '||') expression
+    | expression comparisonOperator expression
+    | expression arithmeticOperator expression
+    | expression '..' expression
+    | '(' expression ')'
+    | '(' tupleElements ')'
+    | '[' arrayElements ']'
+    | '{' mapElements '}'
     ;
 
-expressionWithBlock
-    : ifExpression
+callParams
+    : (expression ',')* expression?
     ;
 
-ifExpression
-    : 'if' expression blockExpression
+arrayElements
+   : (expression ',')* expression?
+   ;
+
+tupleElements
+   : (expression ',')* expression?
+   ;
+
+mapElements
+    : (expression '->' expression ',')* (expression '->' expression)?
+    ;
+
+comparisonOperator
+    : '=='
+    | '!='
+    | '>'
+    | '<'
+    | '>='
+    | '<='
+    ;
+
+arithmeticOperator
+    : '+'
+    | '-'
+    | '*'
+    | '/'
+    | '//'
+    | '%'
+    ;
+
+blockStatement
+    : ifStatement
+    | forLoop
+    | whileLoop
+    ;
+
+ifStatement
+    : 'if' expression block
     (
-        'else' (blockExpression | ifExpression)
+        'else' (block | ifStatement)
     )?
+    ;
+
+forLoop
+    : 'for' pattern '<-' expression block
+    ;
+
+whileLoop
+    : 'while' expression block
     ;
 
 // literals
 
-literal
+literalExpression
     : INTEGER_LITERAL
     | FLOAT_LITERAL
     | CHAR_LITERAL
@@ -110,7 +173,9 @@ mapType
 // patterns
 
 pattern
-    : patternIdentifier
+    : untypedPatternIdentifier
+    | typedPatternIdentifier
+    | wildCardPattern
     | parenthesizedPattern
     | tuplePattern
     | arrayPattern
@@ -118,12 +183,19 @@ pattern
     ;
 
 patternLiteral
-    : literal // todo
+    : literalExpression
     ;
 
-patternIdentifier
-    : IDENTIFIER ':' type  // sometimes patterns do not need to be typed
-    | '_'
+typedPatternIdentifier
+    : IDENTIFIER ':' type
+    ;
+
+untypedPatternIdentifier
+    : IDENTIFIER
+    ;
+
+wildCardPattern
+    : '_'
     ;
 
 parenthesizedPattern
@@ -135,7 +207,7 @@ tuplePattern
     ;
 
 arrayPattern
-    : '[' ']'  // todo this need to be taken care of
+    : '[' (pattern ',')* pattern? ']'
     ;
 
 mapPattern

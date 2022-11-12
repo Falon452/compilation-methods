@@ -2,6 +2,7 @@ lexer grammar SlimpLexer;
 
 // keywords
 
+KW_AS: 'as';
 KW_BREAK: 'break';
 KW_CONTINUE: 'continue';
 KW_ELSE: 'else';
@@ -75,14 +76,11 @@ MINUS: '-';
 STAR: '*';
 SLASH: '/';
 SLASHSLASH: '//';
+PERCENT: '%';
 NOT: '!';
+AND: '&';
 ANDAND: '&&';
 OROR: '||';
-PLUSEQ: '+=';
-MINUSEQ: '-=';
-STAREQ: '*=';
-SLASHEQ: '/=';
-SLASHSLASHEQ: '//=';
 EQ: '=';
 EQEQ: '==';
 NE: '!=';

@@ -42,7 +42,7 @@ a: bool = false;
 b: bool = true;
 a && b
 a || b
-~b
+!b
 
 
 # control flow
