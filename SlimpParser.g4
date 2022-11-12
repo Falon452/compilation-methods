@@ -20,11 +20,15 @@ globalVariable
     ;
 
 function
-    : 'fun' IDENTIFIER '(' functionParams? ')' (':' functionReturnType)? block
+    : 'fun' identifier '(' functionParams? ')' (':' functionReturnType)? block
     ;
 
 functionParams
-    :   '&'? typedPatternIdentifier (',' '&'? typedPatternIdentifier)* ','?
+    :   functionParam (',' functionParam)* ','?
+    ;
+
+functionParam
+    : '&'? typedIdentifier
     ;
 
 functionReturnType
@@ -34,8 +38,6 @@ functionReturnType
 block
     : '{' statement* '}'
     ;
-
-// statements
 
 statement
     : ';'
@@ -47,7 +49,7 @@ statement
     ;
 
 declarationStatement
-    : typedPatternIdentifier ';'
+    : typedIdentifier ';'
     ;
 
 assignmentStatement
@@ -58,55 +60,6 @@ expressionStatement
     : expression ';'
     ;
 
-expression
-    : literalExpression
-    | IDENTIFIER '(' callParams ')'
-    | expression '[' expression ']'
-    | expression 'as' type
-    | ('-' | '!') expression
-    | expression ('&&' | '||') expression
-    | expression comparisonOperator expression
-    | expression arithmeticOperator expression
-    | expression '..' expression
-    | '(' expression ')'
-    | '(' tupleElements ')'
-    | '[' arrayElements ']'
-    | '{' mapElements '}'
-    ;
-
-callParams
-    : (expression ',')* expression?
-    ;
-
-arrayElements
-   : (expression ',')* expression?
-   ;
-
-tupleElements
-   : (expression ',')* expression?
-   ;
-
-mapElements
-    : (expression '->' expression ',')* (expression '->' expression)?
-    ;
-
-comparisonOperator
-    : '=='
-    | '!='
-    | '>'
-    | '<'
-    | '>='
-    | '<='
-    ;
-
-arithmeticOperator
-    : '+'
-    | '-'
-    | '*'
-    | '/'
-    | '//'
-    | '%'
-    ;
 
 blockStatement
     : ifStatement
@@ -129,9 +82,50 @@ whileLoop
     : 'while' expression block
     ;
 
-// literals
+expression
+    : literal                                   #LiteralExpression
+    | identifier '(' expressionElements ')'     #FunctionCallExpression
+    | expression '[' expression ']'             #IndexingExpression
+    | expression 'as' type                      #TypeCastExpression
+    | '!' expression                            #LogicalExpression
+    | expression ('&&' | '||') expression       #LogicalExpression
+    | expression comparisonOperator expression  #LogicalExpression
+    | '-' expression                            #ArithmeticExpression
+    | expression arithmeticOperator expression  #ArithmeticExpression
+    | expression '..' expression                #RangeExpression
+    | '(' expression ')'                        #ParenthesizedExpression
+    | '(' expressionElements ')'                #TupleExpression
+    | '[' expressionElements ']'                #ArrayExpression
+    | '{' mapExpressionElements '}'             #MapExpression
+    ;
 
-literalExpression
+expressionElements
+    : (expression ',')* expression?
+    ;
+
+mapExpressionElements
+    : (expression '->' expression ',')* (expression '->' expression)?
+    ;
+
+comparisonOperator
+    : '=='
+    | '!='
+    | '>'
+    | '<'
+    | '>='
+    | '<='
+    ;
+
+arithmeticOperator
+    : '+'
+    | '-'
+    | '*'
+    | '/'
+    | '//'
+    | '%'
+    ;
+
+literal
     : INTEGER_LITERAL
     | FLOAT_LITERAL
     | CHAR_LITERAL
@@ -140,76 +134,41 @@ literalExpression
     | KW_TRUE
     ;
 
-// types
+identifier
+    : IDENTIFIER
+    ;
+
+typedIdentifier
+    : identifier ':' type
+    ;
 
 type
-    : typeIdentifier
-    | parenthesizedType
-    | tupleType
-    | arrayType
-    | mapType
+    : IDENTIFIER                    #TypeIdentifier
+    | '(' type ')'                  #ParenthesizedType
+    | '(' tupleTypeElements ')'     #TupleType
+    | '[' type ';' expression ']'   #ArrayType
+    | '{' type '->' type '}'        #MapType
     ;
 
-typeIdentifier
-    : IDENTIFIER
+tupleTypeElements
+    : (type ',')* type?
     ;
-
-parenthesizedType
-    : '(' type ')'
-    ;
-
-tupleType
-    : '(' (type ',')* type? ')'
-    ;
-
-arrayType
-    : '[' type ';' expression ']'
-    ;
-
-mapType
-    : '{' type '->' type '}'
-    ;
-
-// patterns
 
 pattern
-    : untypedPatternIdentifier
-    | typedPatternIdentifier
-    | wildCardPattern
-    | parenthesizedPattern
-    | tuplePattern
-    | arrayPattern
-    | mapPattern
+    : literal                       #PatternLiteral
+    | IDENTIFIER                    #UntypedPatternIdentifier
+    | IDENTIFIER ':' type           #TypedPatternIdentifier
+    | '_'                           #WildCardPattern
+    | '(' pattern ')'               #ParenthesizedPattern
+    | '(' patternElements ')'       #TuplePattern
+    | '[' patternElements ']'       #ArrayPattern
+    | '{' mapPatternElements '}'    #MapPattern
     ;
 
-patternLiteral
-    : literalExpression
+patternElements
+    : (pattern ',')* pattern?
     ;
 
-typedPatternIdentifier
-    : IDENTIFIER ':' type
-    ;
-
-untypedPatternIdentifier
-    : IDENTIFIER
-    ;
-
-wildCardPattern
-    : '_'
-    ;
-
-parenthesizedPattern
-    : '(' pattern ')'
-    ;
-
-tuplePattern
-    : '(' (pattern ',')* pattern? ')'
-    ;
-
-arrayPattern
-    : '[' (pattern ',')* pattern? ']'
-    ;
-
-mapPattern
-    : '{' (pattern '->' pattern ',')* (pattern '->' pattern)? '}'
+mapPatternElements
+    : (pattern '->' pattern ',')* (pattern '->' pattern)?
     ;

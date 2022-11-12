@@ -1,5 +1,5 @@
-fun main({a: int -> val: int, b: int -> val2:int}): () {
-    b: int = 3242;
+fun main(mapunia: {int -> int}): () {
+    {a: int -> val: int, b: int -> _} = mapunia;
     if true {
         vos: char = 'a';
     } else {
