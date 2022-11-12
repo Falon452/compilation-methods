@@ -14,6 +14,7 @@ public class LogoMain {
         LogoLexer lexer = new LogoLexer(CharStreams.fromString(logoExample));
         LogoParser parser = new LogoParser(new CommonTokenStream(lexer));
 
+
         parser.prog();
         System.out.println("My parser has executed Order 66");
     }

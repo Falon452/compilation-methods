@@ -6,14 +6,15 @@ grammar Interpreter;
 //}
 
 
-start  :
-     expression  EOF
+start :
+     expression
   ;
 
 expression
    :
    |   INT
    |   expression (PLUS | MINUS) expression
+   |  '(' expression ')'
    ;
 
 PLUS   :  '+';
