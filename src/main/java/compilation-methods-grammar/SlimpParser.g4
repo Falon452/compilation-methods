@@ -19,17 +19,42 @@ globalVariable
     ;
 
 expression
-   :  expression operation expression ';'
-   |  '(' expression ')' ';'
-   |  literal ';'
+   : MINUS? component (operatorAdd component)*
+   | MINUS? component (operatorAdd component)* operatorEquation MINUS? component (operatorAdd component)*
    ;
 
+operatorEquation
+    : SLASHEQ
+    | SLASHSLASHEQ
+    | EQ
+    | EQEQ
+    | NE
+    | GT
+    | LT
+    | GE
+    | LE
+    ;
 
-operation
+operatorAdd
     : PLUS
     | MINUS
-    | STAR
+    ;
+
+component
+    : factor (operatorMul factor)*;
+
+operatorMul
+    : STAR
     | SLASH
+    ;
+
+factor
+    : INTEGER_LITERAL
+    | expressionInParanthesis
+    ;
+
+expressionInParanthesis
+    : '(' expression ')'
     ;
 
 function

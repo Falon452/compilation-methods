@@ -59,7 +59,7 @@ map: { int -> char } = {2 -> 'c', 3 -> 'e'};
 print(b) # true
 
 a: {int -> (char, bool)} = {21 -> ('j', true), 37 -> ('p', false)};
-{21 -> _, 37 -> (value: char, false)} = a;
+{21 -> _, 37 -> (value: char, false)} =  {21 -> ('j', true), 37 -> ('p', false)};
 
 print(value) # 'p';
 
